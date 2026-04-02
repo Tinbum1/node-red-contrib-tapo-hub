@@ -28,27 +28,30 @@ module.exports = function(RED) {
         }
         
         // Handle incoming messages
-        node.on('input', async function(msg) {
+        node.on('input', async function(msg, send, done) {
+            // Compatibility: send/done were added in Node-RED 1.0
+            send = send || function() { node.send.apply(node, arguments); };
+            done = done || function(err) { if (err) node.error(err, msg); };
+            
             try {
-                // Get hub connection
                 const hubConnection = await node.hubConfig.getConnection();
                 
                 if (!hubConnection) {
                     msg.payload = { success: false, error: 'Not connected to H100 hub' };
-                    node.send(msg);
+                    send(msg);
+                    done();
                     return;
                 }
                 
-                const command = msg.payload.command || msg.payload;
+                const command = (msg.payload.command || msg.payload).toString().toLowerCase();
                 const deviceId = msg.payload.deviceId || node.deviceId;
                 
                 node.status({fill: "blue", shape: "dot", text: "processing..."});
                 
-                switch(command.toLowerCase()) {
+                switch(command) {
                     case 'discover':
                     case 'list':
                     case 'listdevices':
-                        // Discover all child devices on hub
                         const allDevices = await hubConnection.getChildDevices(true);
                         const switches = allDevices.filter(d => 
                             d.model && (d.model.includes('S220') || d.model.includes('S210') || d.model.includes('S200'))
@@ -100,7 +103,6 @@ module.exports = function(RED) {
                             msg.payload = { success: false, error: 'Device ID required. Use "discover" command first.' };
                             break;
                         }
-                        // Get current state
                         const devices = await hubConnection.getChildDevices();
                         const device = devices.find(d => d.device_id === deviceId);
                         
@@ -109,7 +111,6 @@ module.exports = function(RED) {
                             break;
                         }
                         
-                        // Toggle based on current state
                         if (device.device_on) {
                             await hubConnection.turnOff(deviceId);
                             msg.payload = { success: true, state: 'off', command: 'toggle', deviceId: deviceId };
@@ -151,16 +152,18 @@ module.exports = function(RED) {
                 }
                 
                 node.status({fill: "green", shape: "dot", text: deviceId ? "connected" : "ready"});
-                node.send(msg);
+                send(msg);
+                done();
                 
             } catch (error) {
-                node.error(`Error processing command: ${error.message}`, msg);
+                node.hubConfig.reconnect();
                 msg.payload = {
                     success: false,
                     error: error.message
                 };
                 node.status({fill: "red", shape: "ring", text: "error"});
-                node.send(msg);
+                send(msg);
+                done(error);
             }
         });
         

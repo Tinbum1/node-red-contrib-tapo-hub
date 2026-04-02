@@ -87,6 +87,16 @@ module.exports = function(RED) {
         };
         
         /**
+         * Force a reconnection on next getConnection() call.
+         * Used by device nodes when they detect a stale session.
+         */
+        node.reconnect = function() {
+            node.isConnected = false;
+            node.hubConnection = null;
+            node.connectPromise = null;
+        };
+
+        /**
          * Disconnect from hub
          */
         node.disconnect = function() {

@@ -1,6 +1,6 @@
 {
-  "name": "node-red-contrib-tapo-hub",
-  "version": "2.0.1",
+  "name": "@macdudeuk/node-red-contrib-tapo-hub",
+  "version": "2.0.2",
   "description": "Node-RED nodes for TP-Link Tapo H100 hub - control switches (S220/S210) and read sensors (T310/T315)",
   "main": "tapo-hub.js",
   "scripts": {

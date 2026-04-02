@@ -2,7 +2,7 @@
 
 Node-RED nodes for controlling TP-Link Tapo devices via H100 hub - smart switches (S220/S210) and temperature/humidity sensors (T310/T315).
 
-[![npm version](https://img.shields.io/npm/v/node-red-contrib-tapo-hub.svg)](https://www.npmjs.com/package/node-red-contrib-tapo-hub)
+[![npm version](https://img.shields.io/npm/v/@macdudeuk/node-red-contrib-tapo-hub.svg)](https://www.npmjs.com/package/@macdudeuk/node-red-contrib-tapo-hub)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Features
@@ -25,7 +25,7 @@ Tapo S220 switches and T310 sensors communicate via **sub-GHz radio** (not WiFi)
 ## Installation
 
 ```bash
-npm install node-red-contrib-tapo-hub
+npm install @macdudeuk/node-red-contrib-tapo-hub
 ```
 
 Or install directly from the Node-RED palette manager.

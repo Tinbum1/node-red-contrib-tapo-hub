@@ -28,27 +28,30 @@ module.exports = function(RED) {
         }
         
         // Handle incoming messages
-        node.on('input', async function(msg) {
+        node.on('input', async function(msg, send, done) {
+            // Compatibility: send/done were added in Node-RED 1.0
+            send = send || function() { node.send.apply(node, arguments); };
+            done = done || function(err) { if (err) node.error(err, msg); };
+            
             try {
-                // Get hub connection
                 const hubConnection = await node.hubConfig.getConnection();
                 
                 if (!hubConnection) {
                     msg.payload = { success: false, error: 'Not connected to H100 hub' };
-                    node.send(msg);
+                    send(msg);
+                    done();
                     return;
                 }
                 
-                const command = msg.payload.command || msg.payload;
+                const command = (msg.payload.command || msg.payload).toString().toLowerCase();
                 const deviceId = msg.payload.deviceId || node.deviceId;
                 
                 node.status({fill: "blue", shape: "dot", text: "reading..."});
                 
-                switch(command.toLowerCase()) {
+                switch(command) {
                     case 'discover':
                     case 'list':
                     case 'listsensors':
-                        // Discover all temperature/humidity sensors
                         const allDevices = await hubConnection.getChildDevices(true);
                         const sensors = allDevices.filter(d => 
                             (d.category && d.category.includes('temp-hmdt-sensor')) ||
@@ -73,7 +76,6 @@ module.exports = function(RED) {
                             break;
                         }
                         
-                        // Get current sensor data
                         const devices = await hubConnection.getChildDevices();
                         const sensor = devices.find(d => d.device_id === deviceId);
                         
@@ -82,7 +84,6 @@ module.exports = function(RED) {
                             break;
                         }
                         
-                        // Extract sensor readings from raw data
                         const raw = sensor.raw || {};
                         const readings = {
                             temperature: raw.current_temp,
@@ -109,7 +110,6 @@ module.exports = function(RED) {
                             timestamp: new Date().toISOString()
                         };
                         
-                        // Update node status with current readings
                         const tempDisplay = readings.temperature !== undefined ? 
                             `${readings.temperature}°${readings.temp_unit === 'celsius' ? 'C' : 'F'}` : 'N/A';
                         const humidDisplay = readings.humidity !== undefined ? 
@@ -130,16 +130,18 @@ module.exports = function(RED) {
                         };
                 }
                 
-                node.send(msg);
+                send(msg);
+                done();
                 
             } catch (error) {
-                node.error(`Error processing command: ${error.message}`, msg);
+                node.hubConfig.reconnect();
                 msg.payload = {
                     success: false,
                     error: error.message
                 };
                 node.status({fill: "red", shape: "ring", text: "error"});
-                node.send(msg);
+                send(msg);
+                done(error);
             }
         });
         

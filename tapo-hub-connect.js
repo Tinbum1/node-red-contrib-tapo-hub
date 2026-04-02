@@ -20,6 +20,30 @@ class TapoHubConnect {
         // Request queue to serialize all hub communications
         // Prevents concurrent requests from interfering with each other
         this.requestQueue = Promise.resolve();
+        
+        this.MAX_RETRIES = 1;
+    }
+    
+    /**
+     * Check if an error indicates a stale/broken encryption session
+     * that can be recovered by reconnecting.
+     */
+    _isSessionError(error) {
+        const msg = error && error.message ? error.message : '';
+        return msg.includes('bad decrypt') ||
+               msg.includes('wrong final block length') ||
+               msg.includes('Invalid key length') ||
+               msg.includes('KLAP') ||
+               msg.includes('handshake');
+    }
+
+    /**
+     * Reset the connection so the next request will re-establish it.
+     */
+    _resetConnection() {
+        this.tapoConnect = null;
+        this.childDevicesCache = null;
+        this.lastUpdate = null;
     }
     
     /**
@@ -31,30 +55,26 @@ class TapoHubConnect {
         const previousRequest = this.requestQueue;
         
         // Create a promise for this request
-        let resolveRequest, rejectRequest;
-        const currentRequest = new Promise((resolve, reject) => {
+        let resolveRequest;
+        const currentRequest = new Promise((resolve) => {
             resolveRequest = resolve;
-            rejectRequest = reject;
         });
         
-        // Update queue to point to current request
+        // Update queue to point to current request.
+        // Always resolve (never reject) the queue promise so that
+        // subsequent queued requests are not blocked by earlier failures
+        // and no unhandled rejection can occur.
         this.requestQueue = currentRequest;
         
         // Wait for previous request to complete, then execute this one
-        try {
-            await previousRequest;
-        } catch (err) {
-            // Ignore errors from previous requests, they're handled elsewhere
-        }
+        await previousRequest;
         
         // Execute the actual request
         try {
             const result = await fn();
-            resolveRequest();
             return result;
-        } catch (error) {
-            rejectRequest(error);
-            throw error;
+        } finally {
+            resolveRequest();
         }
     }
 
@@ -87,58 +107,68 @@ class TapoHubConnect {
 
         // Queue the actual hub request
         return this._queueRequest(async () => {
-            if (!this.tapoConnect) {
-                await this.connect();
-            }
-
-            const allDevices = [];
-            let startIndex = 0;
-            let totalDevices = null;
-
-            try {
-                do {
-                    const result = await this.tapoConnect.get_child_device_list(startIndex);
-                    
-                if (totalDevices === null && result.sum) {
-                    totalDevices = result.sum;
-                }
-
-                    if (result.child_device_list) {
-                        for (const device of result.child_device_list) {
-                            // Parse device info
-                            const parsedDevice = {
-                                device_id: device.device_id,
-                                category: device.category,
-                                type: device.type,
-                                model: device.model,
-                                hw_ver: device.hw_ver,
-                                fw_ver: device.fw_ver,
-                                nickname: device.nickname ? Buffer.from(device.nickname, 'base64').toString() : 'Unknown',
-                                status: device.status,
-                                // Device state info
-                                device_on: device.device_on,
-                                at_low_battery: device.at_low_battery,
-                                rssi: device.rssi,
-                                signal_level: device.signal_level,
-                                // Raw device data
-                                raw: device
-                        };
-                        
-                        allDevices.push(parsedDevice);
+            let lastError;
+            
+            for (let attempt = 0; attempt <= this.MAX_RETRIES; attempt++) {
+                try {
+                    if (!this.tapoConnect) {
+                        await this.connect();
                     }
+
+                    const allDevices = [];
+                    let startIndex = 0;
+                    let totalDevices = null;
+
+                    do {
+                        const result = await this.tapoConnect.get_child_device_list(startIndex);
+                        
+                        if (totalDevices === null && result.sum) {
+                            totalDevices = result.sum;
+                        }
+
+                        if (result.child_device_list) {
+                            for (const device of result.child_device_list) {
+                                const parsedDevice = {
+                                    device_id: device.device_id,
+                                    category: device.category,
+                                    type: device.type,
+                                    model: device.model,
+                                    hw_ver: device.hw_ver,
+                                    fw_ver: device.fw_ver,
+                                    nickname: device.nickname ? Buffer.from(device.nickname, 'base64').toString() : 'Unknown',
+                                    status: device.status,
+                                    device_on: device.device_on,
+                                    at_low_battery: device.at_low_battery,
+                                    rssi: device.rssi,
+                                    signal_level: device.signal_level,
+                                    raw: device
+                                };
+                                
+                                allDevices.push(parsedDevice);
+                            }
+                        }
+
+                        startIndex += 10;
+                    } while (startIndex < (totalDevices || 0));
+
+                    this.childDevicesCache = allDevices;
+                    this.lastUpdate = now;
+                    return allDevices;
+                    
+                } catch (error) {
+                    lastError = error;
+                    
+                    if (this._isSessionError(error) && attempt < this.MAX_RETRIES) {
+                        this.log.warn(`Session error getting child devices, reconnecting (attempt ${attempt + 1}): ${error.message}`);
+                        this._resetConnection();
+                        continue;
+                    }
+                    
+                    this.log.error('Failed to get child devices: ' + error.message);
                 }
-
-                    startIndex += 10; // Hub returns 10 devices at a time
-                } while (startIndex < (totalDevices || 0));
-
-                this.childDevicesCache = allDevices;
-                this.lastUpdate = now;
-                return allDevices;
-
-            } catch (error) {
-                this.log.error('Failed to get child devices: ' + error.message);
-                throw error;
             }
+            
+            throw lastError;
         });
     }
 
@@ -146,37 +176,48 @@ class TapoHubConnect {
      * Control a child device (e.g., turn on/off a switch)
      */
     async controlChildDevice(deviceId, method, params = {}) {
-        // Queue all control requests to prevent concurrent access
         return this._queueRequest(async () => {
-            if (!this.tapoConnect) {
-                await this.connect();
-            }
+            let lastError;
+            
+            for (let attempt = 0; attempt <= this.MAX_RETRIES; attempt++) {
+                try {
+                    if (!this.tapoConnect) {
+                        await this.connect();
+                    }
 
-            try {
-                const request = {
-                    method: 'control_child',
-                    params: {
-                        device_id: deviceId,
-                        requestData: {
-                            method: 'multipleRequest',
-                            params: {
-                                requests: [
-                                    {
-                                        method: method,
-                                        params: params
-                                    }
-                                ]
+                    const request = {
+                        method: 'control_child',
+                        params: {
+                            device_id: deviceId,
+                            requestData: {
+                                method: 'multipleRequest',
+                                params: {
+                                    requests: [
+                                        {
+                                            method: method,
+                                            params: params
+                                        }
+                                    ]
+                                }
                             }
                         }
-                    }
-                };
+                    };
 
-                const result = await this.tapoConnect.send(request);
-                return result;
-            } catch (error) {
-                this.log.error(`Failed to control device ${deviceId}: ${error.message}`);
-                throw error;
+                    return await this.tapoConnect.send(request);
+                } catch (error) {
+                    lastError = error;
+                    
+                    if (this._isSessionError(error) && attempt < this.MAX_RETRIES) {
+                        this.log.warn(`Session error controlling device ${deviceId}, reconnecting (attempt ${attempt + 1}): ${error.message}`);
+                        this._resetConnection();
+                        continue;
+                    }
+                    
+                    this.log.error(`Failed to control device ${deviceId}: ${error.message}`);
+                }
             }
+            
+            throw lastError;
         });
     }
 
