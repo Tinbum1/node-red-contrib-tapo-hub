@@ -131,7 +131,9 @@ Reads T310/T315 temperature and humidity sensors.
 | Smart Button | S200 | Button | ⚠️ Untested |
 | Temp/Humidity Sensor | T310 | Sensor | ✅ Tested |
 | Temp/Humidity Display | T315 | Sensor | ✅ Tested |
-
+| Contact Sensor | T110 | Sensor | ✅ Tested |
+| Motion Sensor  | T100 | Sensor | ✅ Tested |
+| Kasa Valves | KE100 | Sensor | ✅ Tested |
 ## Example Flows
 
 ### Temperature Monitoring
