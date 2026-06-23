@@ -1,6 +1,6 @@
 # node-red-contrib-tapo-hub
 
-Node-RED nodes for controlling TP-Link Tapo devices via H100 hub - smart switches (S220/S210), temperature/humidity sensors (T310/T315), contact sensors (T1100, Motion sensors (T100) and Via KH100 Hub kasa valves (KE100).
+Node-RED nodes for controlling TP-Link Tapo devices via H100 hub - smart switches (S220/S210), temperature/humidity sensors (T310/T315), contact sensors (T110), Motion sensors (T100) and Via KH100 Hub kasa valves (KE100).
 
 [![npm version](https://img.shields.io/npm/v/@macdudeuk/node-red-contrib-tapo-hub.svg)](https://www.npmjs.com/package/@macdudeuk/node-red-contrib-tapo-hub)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
