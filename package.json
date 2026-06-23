@@ -31,7 +31,10 @@
     "nodes": {
       "tapo-hub": "tapo-hub.js",
       "tapo-switch": "tapo-switch.js",
-      "tapo-sensor": "tapo-sensor.js"
+      "tapo-sensor": "tapo-sensor.js",
+	  "tapo-contact": "tapo-contact.js",
+	  "tapo-thermostat": "tapo-thermostat.js",
+	  "tapo-motion": "tapo-motion.js"
     }
   },
   "author": "Andy Collington",
