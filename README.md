@@ -12,7 +12,7 @@ Node-RED nodes for controlling TP-Link Tapo devices via H100 hub - smart switche
 - 🌡️ **Kasa TRV valves** - Read set and ambiant temperature
 - 🏠 **Hub Config Node** - Configure credentials once, use everywhere
 - 🏠 **Contact Sensors** - Read credentials
-- 🏠 **Motion Sensors** - Read Credentials
+- 🏠 **Motion Sensors** - Read credentials
 - 🔄 **Device Discovery** - Automatically find all devices on your hub
 - 📊 **Battery Monitoring** - Track battery levels and signal strength
 - 🚀 **Efficient** - Shared hub connection with request queuing
