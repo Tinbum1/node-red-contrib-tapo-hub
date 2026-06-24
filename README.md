@@ -9,17 +9,20 @@ Node-RED nodes for controlling TP-Link Tapo devices via H100 hub - smart switche
 
 - 🔌 **Switch Control** - Turn S220/S210 switches on/off/toggle
 - 🌡️ **Temperature Sensors** - Read T310/T315 temperature and humidity
+- 🌡️ **Kasa TRV valves** - Read set and ambiant temperature
 - 🏠 **Hub Config Node** - Configure credentials once, use everywhere
+- 🏠 **Contact Sensors** - Read credentials
+- 🏠 **Motion Sensors** - Read Credentials
 - 🔄 **Device Discovery** - Automatically find all devices on your hub
 - 📊 **Battery Monitoring** - Track battery levels and signal strength
 - 🚀 **Efficient** - Shared hub connection with request queuing
 
 ## Architecture
 
-Tapo S220 switches and T310 sensors communicate via **sub-GHz radio** (not WiFi) to the H100 hub. These nodes connect to your H100 hub via local network, which then controls/reads the devices wirelessly.
+Tapo S220 switches and T310 sensors and others communicate via **sub-GHz radio** (not WiFi) to the H100 or KH100 hub. These nodes connect to your hub via a local network, which then controls/reads the devices wirelessly.
 
 ```
-[Node-RED] ←WiFi/LAN→ [H100 Hub] ←sub-GHz→ [S220 / T310 Devices]
+[Node-RED] ←WiFi/LAN→ [Hub] ←sub-GHz→ [S220 / T310 etc Devices]
 ```
 
 ## Installation
