@@ -28,7 +28,7 @@ Tapo S220 switches and T310 sensors and others communicate via **sub-GHz radio**
 ## Installation
 
 ```bash
-npm install @macdudeuk/node-red-contrib-tapo-hub
+npm install @Tinbum1/node-red-contrib-tapo-hub
 ```
 
 Or install directly from the Node-RED palette manager.
