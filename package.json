@@ -40,8 +40,9 @@
   "author": "Andy Collington",
   "license": "Apache-2.0",
   "dependencies": {
-    "homebridge-kasa-hub": "^0.10.0"
+    "homebridge-kasa-hub": "git+https://github.com"
   },
+
   "devDependencies": {
     "node-red": "^3.1.0"
   },
