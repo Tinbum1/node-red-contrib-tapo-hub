@@ -40,7 +40,7 @@
   "author": "Andy Collington",
   "license": "Apache-2.0",
   "dependencies": {
-    "homebridge-kasa-hub": "^git+https://github.com/Tinbum1/homebridge-kasa-hub#support-node-24"
+    "homebridge-kasa-hub": "git+https://github.com/Tinbum1/homebridge-kasa-hub#support-node-24"
   },
 
   "devDependencies": {
