@@ -31,7 +31,11 @@
     "nodes": {
       "tapo-hub": "tapo-hub.js",
       "tapo-switch": "tapo-switch.js",
-      "tapo-sensor": "tapo-sensor.js"
+      "tapo-sensor": "tapo-sensor.js",
+	  "tapo-contact": "tapo-contact.js",
+	  "tapo-thermostat": "tapo-thermostat.js",
+	  "tapo-motion": "tapo-motion.js",
+	  "tapo-water": "tapo-water.js"
     }
   },
   "author": "Andy Collington",
@@ -39,6 +43,7 @@
   "dependencies": {
     "homebridge-kasa-hub": "^0.10.0"
   },
+
   "devDependencies": {
     "node-red": "^3.1.0"
   },

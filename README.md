@@ -1,6 +1,6 @@
 # node-red-contrib-tapo-hub
 
-Node-RED nodes for controlling TP-Link Tapo devices via H100 hub - smart switches (S220/S210) and temperature/humidity sensors (T310/T315).
+Node-RED nodes for controlling TP-Link Tapo devices via H100 hub - smart switches (S220/S210), temperature/humidity sensors (T310/T315), contact sensors (T110), Motion sensors (T100) and Via KH100 Hub kasa valves (KE100).
 
 [![npm version](https://img.shields.io/npm/v/@macdudeuk/node-red-contrib-tapo-hub.svg)](https://www.npmjs.com/package/@macdudeuk/node-red-contrib-tapo-hub)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -9,26 +9,28 @@ Node-RED nodes for controlling TP-Link Tapo devices via H100 hub - smart switche
 
 - 🔌 **Switch Control** - Turn S220/S210 switches on/off/toggle
 - 🌡️ **Temperature Sensors** - Read T310/T315 temperature and humidity
+- 🌡️ **Kasa TRV valves** - Read set and ambiant temperature
 - 🏠 **Hub Config Node** - Configure credentials once, use everywhere
+- 🏠 **Contact Sensors** - Read credentials
+- 🏠 **Motion Sensors** - Read credentials
+- 🏠 **Water Sensors** - Read credentials
 - 🔄 **Device Discovery** - Automatically find all devices on your hub
 - 📊 **Battery Monitoring** - Track battery levels and signal strength
 - 🚀 **Efficient** - Shared hub connection with request queuing
 
 ## Architecture
 
-Tapo S220 switches and T310 sensors communicate via **sub-GHz radio** (not WiFi) to the H100 hub. These nodes connect to your H100 hub via local network, which then controls/reads the devices wirelessly.
+Tapo S220 switches and T310 sensors and others communicate via **sub-GHz radio** (not WiFi) to the H100 or KH100 hub. These nodes connect to your hub via a local network, which then controls/reads the devices wirelessly.
 
 ```
-[Node-RED] ←WiFi/LAN→ [H100 Hub] ←sub-GHz→ [S220 / T310 Devices]
+[Node-RED] ←WiFi/LAN→ [Hub] ←sub-GHz→ [S220 / T310 etc Devices]
 ```
 
 ## Installation
 
 ```bash
-npm install @macdudeuk/node-red-contrib-tapo-hub
+npm install @Tinbum1/node-red-contrib-tapo-hub
 ```
-
-Or install directly from the Node-RED palette manager.
 
 ## Quick Start
 
@@ -131,7 +133,10 @@ Reads T310/T315 temperature and humidity sensors.
 | Smart Button | S200 | Button | ⚠️ Untested |
 | Temp/Humidity Sensor | T310 | Sensor | ✅ Tested |
 | Temp/Humidity Display | T315 | Sensor | ✅ Tested |
-
+| Contact Sensor | T110 | Sensor | ✅ Tested |
+| Motion Sensor  | T100 | Sensor | ✅ Tested |
+| Water Sensor  | T300 | Sensor | ✅ Tested |
+| Kasa Valves | KE100 | Sensor | ✅ Tested |
 ## Example Flows
 
 ### Temperature Monitoring

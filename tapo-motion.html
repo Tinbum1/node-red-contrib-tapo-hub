@@ -1,0 +1,52 @@
+/**
+ * Tapo Sensor Node (T100, Motion sensor)
+ * Reads motion from Tapo sensors via H100 hub
+ * Uses tapo-hub config node for shared hub connection
+ */
+
+<script type="text/javascript">
+    RED.nodes.registerType('tapo-motion', {
+        category: 'smart home',
+        color: '#2ea1e4',
+        defaults: {
+            name: { value: "" },
+            hub: { type: "tapo-hub", required: true },
+            deviceId: { value: "", required: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "sensor.svg",
+        label: function() {
+            return this.name || "Tapo Motion Sensor T100";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="tapo-motion">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-hub"><i class="fa fa-server"></i> Hub</label>
+        <input type="text" id="node-input-hub">
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="fa fa-id-badge"></i> Device ID</label>
+        <input type="text" id="node-input-deviceId" placeholder="Paste Device ID here">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="tapo-motion">
+    <p>Reads the status and motion state of a TP-Link Tapo T100 Motion Sensor.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd>Send any message to fetch status. Send <code>"discover"</code> to list all sub-GHz child devices.</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Returns <code>readings.motion_detected</code> (boolean) alongside standard device battery and signal metrics.</dd>
+    </dl>
+</script>

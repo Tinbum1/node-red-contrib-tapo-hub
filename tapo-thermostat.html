@@ -1,0 +1,54 @@
+/**
+ * Tapo Sensor Node (KE100, Valve control)
+ * Reads measured temperature and set temperature from Tapo sensors via KH100 hub
+ * Uses tapo-hub config node for shared hub connection
+ */
+
+<script type="text/javascript">
+    RED.nodes.registerType('tapo-thermostat', {
+        category: 'smart home',
+        color: '#2ea1e4',
+        defaults: {
+            name: { value: "" },
+            hub: { type: "tapo-hub", required: true },
+            deviceId: { value: "", required: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "climate.svg",
+        label: function() {
+            return this.name || "Tapo Thermostat KE100";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="tapo-thermostat">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-hub"><i class="fa fa-server"></i> Hub</label>
+        <input type="text" id="node-input-hub">
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="fa fa-id-badge"></i> Device ID</label>
+        <input type="text" id="node-input-deviceId" placeholder="Paste Device ID here">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="tapo-thermostat">
+    <p>Controls and reads status metrics from a TP-Link Tapo KE100 Smart TRV Thermostat.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string | number | object</span></dt>
+        <dd>
+            <ul>
+                <li><b>Set Target Temp:</b> Send a number directly (e.g., <code>21.5</code>) or an object: <code>{"target_temperature": 21.5}</code></li>
+                <li><b>Set Mode:</b> Send a string directly (<code>"eco"</code>, <code>"comfort"</code>, <code>"auto"</code>) or an object: <code>{"mode": "eco"}</code></li>
+                <li><b>Request Status:</b> Send string <code>"status"</code> or <code>"read"</code>.</li>
+            </ul>
+        </dd>
+    </dl>
+</script>
+
