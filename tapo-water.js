@@ -104,7 +104,7 @@ module.exports = function(RED) {
                         // Check leak indicators inside the data payload
                         const leakStatus = (rawBlock.water_leak_status || "normal").toLowerCase();
                         const isInAlarm = rawBlock.in_alarm === true;
-                        const isLeaking = leakStatus !== "normal" || isInAlarm;
+                        const isLeaking = leakStatus === "water_leak" || isInAlarm;
                         
                         const batteryPercent = rawBlock.battery_percentage ?? deviceData.battery_percentage ?? 100;
                         const isBatteryLow = rawBlock.at_low_battery ?? deviceData.at_low_battery ?? false;
