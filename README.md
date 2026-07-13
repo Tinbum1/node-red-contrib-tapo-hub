@@ -9,7 +9,7 @@ Node-RED nodes for controlling TP-Link Tapo devices via H100 hub - smart switche
 
 - 🔌 **Switch Control** - Turn S220/S210 switches on/off/toggle
 - 🌡️ **Temperature Sensors** - Read T310/T315 temperature and humidity
-- 🌡️ **Kasa TRV valves** - Read set and ambiant temperature
+- 🌡️ **Kasa TRV valves** - Read / Set temperature
 - 🏠 **Hub Config Node** - Configure credentials once, use everywhere
 - 🏠 **Contact Sensors** - Read credentials
 - 🏠 **Motion Sensors** - Read credentials
