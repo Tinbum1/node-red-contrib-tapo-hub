@@ -1,7 +1,7 @@
 {
-  "name": "@macdudeuk/node-red-contrib-tapo-hub",
-  "version": "2.0.2",
-  "description": "Node-RED nodes for TP-Link Tapo H100 hub - control switches (S220/S210) and read sensors (T310/T315)",
+  "name": "@Tinbum1/node-red-contrib-tapo-hub",
+  "version": "1.0.0",
+  "description": "Node-RED nodes for TP-Link Tapo H100 hub - control switches (S220/S210) and read sensors (T310/T315) and more",
   "main": "tapo-hub.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -38,7 +38,7 @@
 	  "tapo-water": "tapo-water.js"
     }
   },
-  "author": "Andy Collington",
+  "author": "Tinbum forked from Andy Collington",
   "license": "Apache-2.0",
   "dependencies": {
     "homebridge-kasa-hub": "^0.10.0"
@@ -49,12 +49,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/macdudeuk2/node-red-contrib-tapo-hub.git"
+    "url": "git+https://github.com/Tinbum1/node-red-contrib-tapo-hub.git"
   },
   "bugs": {
-    "url": "https://github.com/macdudeuk2/node-red-contrib-tapo-hub/issues"
+    "url": "https://github.com/Tinbum1/node-red-contrib-tapo-hub/issues"
   },
-  "homepage": "https://github.com/macdudeuk2/node-red-contrib-tapo-hub#readme",
+  "homepage": "https://github.com/Tinbum1/node-red-contrib-tapo-hub#readme",
   "engines": {
     "node": ">=14.0.0"
   }
